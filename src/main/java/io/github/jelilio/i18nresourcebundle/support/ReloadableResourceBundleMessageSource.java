@@ -350,16 +350,6 @@ public class ReloadableResourceBundleMessageSource extends AbstractResourceBased
    * appending language code, country code, and variant code.
    * <p>For example, basename "messages", Locale "de_AT_oo" &rarr; "messages_de_AT_OO",
    * "messages_de_AT", "messages_de".
-   * <p>Follows the rules defined by {@link Locale#toString()}.
-   * @param basename the basename of the bundle
-   * @param locale the locale
-   * @return the List of filenames to check
-   */
-  /**
-   * Calculate the filenames for the given bundle basename and Locale,
-   * appending language code, country code, and variant code.
-   * <p>For example, basename "messages", Locale "de_AT_oo" &rarr; "messages_de_AT_OO",
-   * "messages_de_AT", "messages_de".
    * <p>Follows the rules defined by {@link java.util.Locale#toString()}.
    * @param basename the basename of the bundle
    * @param locale the locale
