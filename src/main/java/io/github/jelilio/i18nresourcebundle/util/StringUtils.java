@@ -135,14 +135,57 @@ public class StringUtils {
     return false;
   }
 
+  /**
+   * Check that the given {@code String} is neither {@code null} nor of length 0.
+   * <p>Note: this method returns {@code true} for a {@code String} that
+   * purely consists of whitespace.
+   * @param str the {@code String} to check (may be {@code null})
+   * @return {@code true} if the {@code String} is not {@code null} and has length
+   * @see #hasLength(CharSequence)
+   * @see #hasText(String)
+   */
   public static boolean hasLength(@Nullable String str) {
     return str != null && !str.isEmpty();
   }
 
+  /**
+   * Check that the given {@code CharSequence} is neither {@code null} nor
+   * of length 0.
+   * <p>Note: this method returns {@code true} for a {@code CharSequence}
+   * that purely consists of whitespace.
+   * <p><pre class="code">
+   * StringUtils.hasLength(null) = false
+   * StringUtils.hasLength("") = false
+   * StringUtils.hasLength(" ") = true
+   * StringUtils.hasLength("Hello") = true
+   * </pre>
+   * @param str the {@code CharSequence} to check (may be {@code null})
+   * @return {@code true} if the {@code CharSequence} is not {@code null} and has length
+   * @see #hasLength(String)
+   * @see #hasText(CharSequence)
+   */
+  public static boolean hasLength(@Nullable CharSequence str) {
+    return (str != null && !str.isEmpty());  // as of JDK 15
+  }
+
+  /**
+   * Copy the given {@link Collection} into a {@code String} array.
+   * <p>The {@code Collection} must contain {@code String} elements only.
+   * @param collection the {@code Collection} to copy
+   * (potentially {@code null} or empty)
+   * @return the resulting {@code String} array
+   */
   public static String[] toStringArray(@Nullable Collection<String> collection) {
     return !CollectionUtils.isEmpty(collection) ? (String[])collection.toArray(EMPTY_STRING_ARRAY) : EMPTY_STRING_ARRAY;
   }
 
+  /**
+   * Replace all occurrences of a substring within a string with another string.
+   * @param inString {@code String} to examine
+   * @param oldPattern {@code String} to replace
+   * @param newPattern {@code String} to insert
+   * @return a {@code String} with the replacements
+   */
   public static String replace(String inString, String oldPattern, @Nullable String newPattern) {
     if (hasLength(inString) && hasLength(oldPattern) && newPattern != null) {
       int index = inString.indexOf(oldPattern);
@@ -171,6 +214,12 @@ public class StringUtils {
     }
   }
 
+  /**
+   * Extract the filename from the given Java resource path,
+   * e.g. {@code "mypath/myfile.txt" &rarr; "myfile.txt"}.
+   * @param path the file path (may be {@code null})
+   * @return the extracted filename, or {@code null} if none
+   */
   @Nullable
   public static String getFilename(@Nullable String path) {
     if (path == null) {
@@ -277,6 +326,14 @@ public class StringUtils {
     return prefix.isEmpty() ? joined : prefix + joined;
   }
 
+  /**
+   * Apply the given relative path to the given Java resource path,
+   * assuming standard Java folder separation (i.e. "/" separators).
+   * @param path the path to start from (usually a full file path)
+   * @param relativePath the relative path to apply
+   * (relative to the full file path above)
+   * @return the full file path that results from applying the relative path
+   */
   public static String applyRelativePath(String path, String relativePath) {
     int separatorIndex = path.lastIndexOf(47);
     if (separatorIndex != -1) {
@@ -324,14 +381,40 @@ public class StringUtils {
     return sb.toString();
   }
 
+  /**
+   * Convert a {@code Collection} into a delimited {@code String} (e.g. CSV).
+   * <p>Useful for {@code toString()} implementations.
+   * @param coll the {@code Collection} to convert (potentially {@code null} or empty)
+   * @param delim the delimiter to use (typically a ",")
+   * @return the delimited {@code String}
+   */
   public static String collectionToDelimitedString(@Nullable Collection<?> coll, String delim) {
     return collectionToDelimitedString(coll, delim, "", "");
   }
 
+  /**
+   * Convert a {@code Collection} into a delimited {@code String} (e.g., CSV).
+   * <p>Useful for {@code toString()} implementations.
+   * @param coll the {@code Collection} to convert (potentially {@code null} or empty)
+   * @return the delimited {@code String}
+   */
   public static String collectionToCommaDelimitedString(@Nullable Collection<?> coll) {
     return collectionToDelimitedString(coll, ",");
   }
 
+  /**
+   * Take a {@code String} that is a delimited list and convert it into a
+   * {@code String} array.
+   * <p>A single {@code delimiter} may consist of more than one character,
+   * but it will still be considered as a single delimiter string, rather
+   * than as a bunch of potential delimiter characters, in contrast to
+   * {@link #tokenizeToStringArray}.
+   * @param str the input {@code String} (potentially {@code null} or empty)
+   * @param delimiter the delimiter between elements (this is a single delimiter,
+   * rather than a bunch individual delimiter characters)
+   * @return an array of the tokens in the list
+   * @see #tokenizeToStringArray
+   */
   public static String[] delimitedListToStringArray(@Nullable String str, @Nullable String delimiter) {
     return delimitedListToStringArray(str, delimiter, (String)null);
   }
@@ -404,6 +487,57 @@ public class StringUtils {
   }
 
   /**
+   * Convert a comma delimited list (e.g., a row from a CSV file) into an
+   * array of strings.
+   * @param str the input {@code String} (potentially {@code null} or empty)
+   * @return an array of strings, or the empty array in case of empty input
+   */
+  public static String[] commaDelimitedListToStringArray(@Nullable String str) {
+    return delimitedListToStringArray(str, ",");
+  }
+
+  /**
+   * Trim <em>all</em> whitespace from the given {@code CharSequence}:
+   * leading, trailing, and in between characters.
+   * @param str the {@code CharSequence} to check
+   * @return the trimmed {@code CharSequence}
+   * @since 5.3.22
+   * @see #trimAllWhitespace(String)
+   * @see java.lang.Character#isWhitespace
+   */
+  public static CharSequence trimAllWhitespace(CharSequence str) {
+    if (!hasLength(str)) {
+      return str;
+    }
+
+    int len = str.length();
+    StringBuilder sb = new StringBuilder(str.length());
+    for (int i = 0; i < len; i++) {
+      char c = str.charAt(i);
+      if (!Character.isWhitespace(c)) {
+        sb.append(c);
+      }
+    }
+    return sb;
+  }
+
+  /**
+   * Trim <em>all</em> whitespace from the given {@code String}:
+   * leading, trailing, and in between characters.
+   * @param str the {@code String} to check
+   * @return the trimmed {@code String}
+   * @see #trimAllWhitespace(CharSequence)
+   * @see java.lang.Character#isWhitespace
+   */
+  public static String trimAllWhitespace(String str) {
+    if (!hasLength(str)) {
+      return str;
+    }
+
+    return trimAllWhitespace((CharSequence) str).toString();
+  }
+
+  /**
    * Tokenize the given {@code String} into a {@code String} array via a
    * {@link StringTokenizer}.
    * <p>Trims tokens and omits empty tokens.
@@ -461,5 +595,66 @@ public class StringUtils {
       }
     }
     return toStringArray(tokens);
+  }
+
+  /**
+   * Extract the filename extension from the given Java resource path,
+   * e.g. "mypath/myfile.txt" &rarr; "txt".
+   * @param path the file path (may be {@code null})
+   * @return the extracted filename extension, or {@code null} if none
+   */
+  @Nullable
+  public static String getFilenameExtension(@Nullable String path) {
+    if (path == null) {
+      return null;
+    }
+
+    int extIndex = path.lastIndexOf(EXTENSION_SEPARATOR);
+    if (extIndex == -1) {
+      return null;
+    }
+
+    int folderIndex = path.lastIndexOf(FOLDER_SEPARATOR_CHAR);
+    if (folderIndex > extIndex) {
+      return null;
+    }
+
+    return path.substring(extIndex + 1);
+  }
+
+  /**
+   * Truncate the supplied {@link CharSequence}.
+   * <p>Delegates to {@link #truncate(CharSequence, int)}, supplying {@code 100}
+   * as the threshold.
+   * @param charSequence the {@code CharSequence} to truncate
+   * @return a truncated string, or a string representation of the original
+   * {@code CharSequence} if its length does not exceed the threshold
+   * @since 5.3.27
+   */
+  public static String truncate(CharSequence charSequence) {
+    return truncate(charSequence, DEFAULT_TRUNCATION_THRESHOLD);
+  }
+
+  /**
+   * Truncate the supplied {@link CharSequence}.
+   * <p>If the length of the {@code CharSequence} is greater than the threshold,
+   * this method returns a {@linkplain CharSequence#subSequence(int, int)
+   * subsequence} of the {@code CharSequence} (up to the threshold) appended
+   * with the suffix {@code " (truncated)..."}. Otherwise, this method returns
+   * {@code charSequence.toString()}.
+   * @param charSequence the {@code CharSequence} to truncate
+   * @param threshold the maximum length after which to truncate; must be a
+   * positive number
+   * @return a truncated string, or a string representation of the original
+   * {@code CharSequence} if its length does not exceed the threshold
+   * @since 5.3.27
+   */
+  public static String truncate(CharSequence charSequence, int threshold) {
+    Assert.isTrue(threshold > 0,
+        () -> "Truncation threshold must be a positive number: " + threshold);
+    if (charSequence.length() > threshold) {
+      return charSequence.subSequence(0, threshold) + TRUNCATION_SUFFIX;
+    }
+    return charSequence.toString();
   }
 }

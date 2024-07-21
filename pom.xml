@@ -6,19 +6,19 @@
 
     <groupId>io.github.jelilio</groupId>
     <artifactId>i18n-resource-bundle</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
+    <packaging>jar</packaging>
 
     <name>i18n-resource-bundle</name>
-
     <description>
         This library provides utility's classes to implement internationalisation (i18n) in Java frameworks like Quarkus.
     </description>
-    <url>https://jelilio.github.io</url>
+    <url>https://jelilio.github.io/i18n-resource-bundle</url>
 
     <licenses>
         <license>
             <name>The Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
     </licenses>
 

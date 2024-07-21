@@ -174,6 +174,16 @@ public abstract class ResourceUtils {
     return extractJarFileURL(jarUrl);
   }
 
+  /**
+   * Create a clean URL instance for the given location String,
+   * going through URI construction and then URL conversion.
+   * @param location the location String to convert into a URL instance
+   * @return the URL instance
+   * @throws MalformedURLException if the location wasn't a valid URL
+   * @since 6.0
+   * @see java.net.URI#toURL()
+   * @see #toURI(String)
+   */
   public static URL toURL(String location) throws MalformedURLException {
     try {
       return toURI(StringUtils.cleanPath(location)).toURL();
@@ -182,6 +192,17 @@ public abstract class ResourceUtils {
     }
   }
 
+  /**
+   * Create a clean URL instance for the given root URL and relative path,
+   * going through URI construction and then URL conversion.
+   * @param root the root URL to start from
+   * @param relativePath the relative path to apply
+   * @return the relative URL instance
+   * @throws MalformedURLException if the end result is not a valid URL
+   * @since 6.0
+   * @see #toURL(String)
+   * @see StringUtils#applyRelativePath
+   */
   public static URL toRelativeURL(URL root, String relativePath) throws MalformedURLException {
     relativePath = StringUtils.replace(relativePath, "#", "%23");
     return toURL(StringUtils.applyRelativePath(root.toString(), relativePath));
@@ -217,6 +238,16 @@ public abstract class ResourceUtils {
     }
   }
 
+  /**
+   * Resolve the given resource URL to a {@code java.io.File},
+   * i.e. to a file in the file system.
+   * @param resourceUrl the resource URL to resolve
+   * @param description a description of the original resource that
+   * the URL was created for (for example, a class path location)
+   * @return a corresponding File object
+   * @throws FileNotFoundException if the URL cannot be resolved to
+   * a file in the file system
+   */
   public static File getFile(URL resourceUrl, String description) throws FileNotFoundException {
     Assert.notNull(resourceUrl, "Resource URL must not be null");
     if (!URL_PROTOCOL_FILE.equals(resourceUrl.getProtocol())) {
@@ -234,6 +265,16 @@ public abstract class ResourceUtils {
     }
   }
 
+  /**
+   * Resolve the given resource URI to a {@code java.io.File},
+   * i.e. to a file in the file system.
+   * @param resourceUri the resource URI to resolve
+   * @param description a description of the original resource that
+   * the URI was created for (for example, a class path location)
+   * @return a corresponding File object
+   * @throws FileNotFoundException if the URL cannot be resolved to
+   * a file in the file system
+   */
   public static File getFile(URI resourceUri, String description) throws FileNotFoundException {
     Assert.notNull(resourceUri, "Resource URI must not be null");
     if (!URL_PROTOCOL_FILE.equals(resourceUri.getScheme())) {

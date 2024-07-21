@@ -31,6 +31,9 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.function.Supplier;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Convenience base class for {@link Resource} implementations,
  * pre-implementing typical behavior.
@@ -41,6 +44,8 @@ import java.util.function.Supplier;
  *
  */
 public abstract class AbstractResource implements Resource {
+  protected final Log logger = LogFactory.getLog(getClass());
+
   public AbstractResource() {
   }
 
@@ -152,10 +157,9 @@ public abstract class AbstractResource implements Resource {
   }
 
   private void debug(Supplier<String> message, Throwable ex) {
-//    Log logger = LogFactory.getLog(this.getClass());
-//    if (logger.isDebugEnabled()) {
-//      logger.debug(message.get(), ex);
-//    }
+    if (logger.isDebugEnabled()) {
+      logger.debug(message.get(), ex);
+    }
   }
 
   public boolean equals(@Nullable Object other) {

@@ -39,6 +39,17 @@ public abstract class ReflectionUtils {
     rethrowRuntimeException(ex.getTargetException());
   }
 
+  /**
+   * Rethrow the given {@link Throwable exception}, which is presumably the
+   * <em>target exception</em> of an {@link InvocationTargetException}.
+   * Should only be called if no checked exception is expected to be thrown
+   * by the target method.
+   * <p>Rethrows the underlying exception cast to a {@link RuntimeException} or
+   * {@link Error} if appropriate; otherwise, throws an
+   * {@link UndeclaredThrowableException}.
+   * @param ex the exception to rethrow
+   * @throws RuntimeException the rethrown exception
+   */
   public static void rethrowRuntimeException(@Nullable Throwable ex) {
     if (ex instanceof RuntimeException runtimeException) {
       throw runtimeException;
@@ -49,11 +60,30 @@ public abstract class ReflectionUtils {
     throw new UndeclaredThrowableException(ex);
   }
 
+  /**
+   * Invoke the specified {@link Method} against the supplied target object with no arguments.
+   * The target object can be {@code null} when invoking a static {@link Method}.
+   * <p>Thrown exceptions are handled via a call to {@link #handleReflectionException}.
+   * @param method the method to invoke
+   * @param target the target object to invoke the method on
+   * @return the invocation result, if any
+   * @see #invokeMethod(java.lang.reflect.Method, Object, Object[])
+   */
   @Nullable
   public static Object invokeMethod(Method method, @Nullable Object target) {
     return invokeMethod(method, target, EMPTY_OBJECT_ARRAY);
   }
 
+  /**
+   * Invoke the specified {@link Method} against the supplied target object with the
+   * supplied arguments. The target object can be {@code null} when invoking a
+   * static {@link Method}.
+   * <p>Thrown exceptions are handled via a call to {@link #handleReflectionException}.
+   * @param method the method to invoke
+   * @param target the target object to invoke the method on
+   * @param args the invocation arguments (may be {@code null})
+   * @return the invocation result, if any
+   */
   @Nullable
   public static Object invokeMethod(Method method, @Nullable Object target, @Nullable Object... args) {
     try {
@@ -65,6 +95,17 @@ public abstract class ReflectionUtils {
     throw new IllegalStateException("Should never get here");
   }
 
+  /**
+   * Get the field represented by the supplied {@link Field field object} on the
+   * specified {@link Object target object}. In accordance with {@link Field#get(Object)}
+   * semantics, the returned value is automatically wrapped if the underlying field
+   * has a primitive type.
+   * <p>Thrown exceptions are handled via a call to {@link #handleReflectionException(Exception)}.
+   * @param field the field to get
+   * @param target the target object from which to get the field
+   * (or {@code null} for a static field)
+   * @return the field's current value
+   */
   @Nullable
   public static Object getField(Field field, @Nullable Object target) {
     try {
@@ -76,6 +117,16 @@ public abstract class ReflectionUtils {
     throw new IllegalStateException("Should never get here");
   }
 
+  /**
+   * Handle the given reflection exception.
+   * <p>Should only be called if no checked exception is expected to be thrown
+   * by a target method, or if an error occurs while accessing a method or field.
+   * <p>Throws the underlying RuntimeException or Error in case of an
+   * InvocationTargetException with such a root cause. Throws an
+   * IllegalStateException with an appropriate message or
+   * UndeclaredThrowableException otherwise.
+   * @param ex the reflection exception to handle
+   */
   public static void handleReflectionException(Exception ex) {
     if (ex instanceof NoSuchMethodException) {
       throw new IllegalStateException("Method not found: " + ex.getMessage());

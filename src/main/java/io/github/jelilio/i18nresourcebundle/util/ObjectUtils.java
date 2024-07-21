@@ -112,6 +112,15 @@ public abstract class ObjectUtils {
     return false;
   }
 
+  /**
+   * Compare the given arrays with {@code Arrays.equals}, performing an equality
+   * check based on the array elements rather than the array reference.
+   * @param o1 first array to compare
+   * @param o2 second array to compare
+   * @return whether the given objects are equal
+   * @see #nullSafeEquals(Object, Object)
+   * @see java.util.Arrays#equals
+   */
   private static boolean arrayEquals(Object o1, Object o2) {
     if (o1 instanceof Object[] objects1) {
       if (o2 instanceof Object[] objects2) {
