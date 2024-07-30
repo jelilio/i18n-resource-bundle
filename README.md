@@ -30,7 +30,7 @@ welcome.text=Welcome {0} to a new world
 ````java
 public MessageSource messageSource() {
   MessageSource messageSource  = new ResourceBundleMessageSource();
-  messageSource.setBasename("classpath:messages");
+  messageSource.setBasename("messages");
   messageSource.setDefaultEncoding("UTF-8");
   messageSource.setFallbackToSystemLocale(false);
   return messageSource;
@@ -47,7 +47,7 @@ public void greeting(String name) {
 ````
 
 ### Contributor
-* @jelilio
+* [@jelilio](https://jelilio.github.io)
 
 ### License
 
